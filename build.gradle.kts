@@ -14,6 +14,7 @@ repositories {
 dependencies {
     compile(kotlin("stdlib-jdk8"))
     compile(kotlin("reflect"))
+    compile("org.reflections:reflections:0.9.11")
     compile(files("libs/json-lib-2.4-jdk15.jar"))
     // compile(fileTree("libs") { include("*.jar") })
 }

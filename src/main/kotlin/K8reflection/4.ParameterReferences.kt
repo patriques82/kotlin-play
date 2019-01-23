@@ -14,11 +14,20 @@ fun terminate(terminator: Terminator, human: Human) {
 // Parameter references: KParameter (represents function or property getter/setter parameters)
 
 fun main(args: Array<String>) {
-    val terminatorParam: KParameter = Terminator::class.constructors.firstOrNull()!!.parameters[0]
+    val terminator = Terminator(0)
+    val human = Human()
+
+    val terminatorParam: KParameter = terminator::class.constructors.firstOrNull()!!.parameters[0]
+
     println(terminatorParam.name) // numberOfKills
     println(terminatorParam.type) // Kotlin.Int
 
     val terminateParam: KParameter = ::terminate.parameters[0]
     println(terminateParam.name) // terminator
     println(terminateParam.type) // K8reflection.Terminator
+
+    val humanParam = ::terminate.parameters[1]
+    println(humanParam.name) // human
+    println(humanParam.type) // K8reflection.Human
+
 }

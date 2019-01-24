@@ -24,7 +24,7 @@ class Project {
 
 open class Repository(val name: String)
 
-class Maven: Repository("Maven")
+class Maven: Repository("maven")
 
 class Repositories(private val repositories: MutableList<Repository>) :
     Iterable<Repository> by repositories {
@@ -35,11 +35,11 @@ class Repositories(private val repositories: MutableList<Repository>) :
 
 // Dependencies
 
-open class Dependency(val name: String)
+open class Dependency(val coordinates: String)
 
 class KotlinDependency(library: String) : Dependency("kotlin:$library")
 
-class FileDependency(file: String) : Dependency("/path-to-project/:$file")
+class FileDependency(file: String) : Dependency("/path-to-project/$file")
 
 class Dependencies(private val dependencies: MutableList<Dependency>) :
     Iterable<Dependency> by dependencies {
@@ -69,13 +69,22 @@ fun main(args: Array<String>) {
             compile(kotlin("stdlib-jdk8"))
             compile(kotlin("reflect"))
         }
+        // Evaluation (Lambda with receiver)
+        // this.dependencies({ this.compile(kotlin("reflect")) })
+        // this.dependencies({ dependencies.compile(kotlin("reflect")) })
+        // project.dependencies({ project.dependencies.compile(kotlin("reflect")) })
+
         dependencies.compile(files("libs/json-lib-2.4-jdk15.jar"))
+        // Evaluation (invoke)
+        // this.dependencies.invoke({ this.compile(files("libs/json-lib-2.4-jdk15.jar")) })
+        // this.dependencies.invoke({ dependencies.compile(files("libs/json-lib-2.4-jdk15.jar")) })
+        // project.dependencies.invoke({ project.dependencies.compile(files("libs/json-lib-2.4-jdk15.jar")) })
     }
 
-    project.dependencies.forEach { println(it.name) }
+    project.dependencies.forEach { println(it.coordinates) }
     // kotlin:stdlib-jdk8
     // kotlin:reflect
-    // path-to-project/:libs/json-lib-2.4-jdk15.jar
+    // path-to-project/libs/json-lib-2.4-jdk15.jar
     project.repositories.forEach { println(it.name) }
-    // Maven
+    // maven
 }

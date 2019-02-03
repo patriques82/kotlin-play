@@ -21,9 +21,7 @@ import kotlin.system.measureTimeMillis
 // coroutine builders) or other suspending functions.
 
 // Coroutine builders:
-// Coroutine builders are simple functions that create a new coroutine to run a given suspending function. They can be
-// called from normal non-suspending functions because they are not suspending themselves, and thus act as a bridge
-// between the normal and the suspending world.
+// Simple functions that create a new coroutine to run a given suspending function.
 //
 // Examples:
 // async() - used when a result is expected. It returns a Deferred<T> which either contains result or an exception.

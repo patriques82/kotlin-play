@@ -1,11 +1,12 @@
 package K10coroutines
 
 import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.channels.actor
 import kotlinx.coroutines.channels.consumeEach
 
 // Actors:
-// The actor model solves deadlocks by, instead of sharing memory (shared state) to communicate, letting actors
+// The actor model solves deadlocks by, instead of sharing memory (shared state) to communicate, it lets actors
 // communicate to share memory. An actor is a combination of a coroutine containing a state and a channel to communicate
 // with other coroutines. An actor works on a ActorScope<T> which both implements CoroutineScope and ReceiveChannel<T>
 // so it can receive messages directly whithout explicitly reading from its channel.
@@ -16,8 +17,7 @@ object IncCounter : CounterMsg() // one-way message to increment counter
 class GetCounter(val response: CompletableDeferred<Int>) : CounterMsg() // a two-way message to get the counter
 
 // The actor
-fun CoroutineScope.counterActor() = actor<CounterMsg> {
-    // this: ActorScope<CounterMsg>
+fun CoroutineScope.counterActor(): SendChannel<CounterMsg> = actor { // this: ActorScope<CounterMsg>
     var counter = 0 // actor state
     consumeEach { msg -> // actor's implicit mailbox channel
         when (msg) {

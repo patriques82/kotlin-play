@@ -25,9 +25,9 @@ fun main(args: Array<String>) {
     runBlocking { // this: CoroutineScope
         val are = GlobalScope.launch { // Coroutine builder launches coroutine in global scope (not in outer scope).
             delay(1000L)
-            println("are ")
+            println("are")
         }
-        println("coroutines ") // main thread continues here immediately
+        println("coroutines") // main thread continues here immediately
         // wait until coroutines in global scope completes, otherwise the main thread continues and results get mixed up.
         are.join()
         great.join()
@@ -57,7 +57,7 @@ fun main(args: Array<String>) {
             println("2")
         }
 
-        coroutineScope { // Creates a new scope that works like runBlocking.
+        coroutineScope { // Creates a new scope that works like runBlocking inside a coroutine scope
             launch {
                 delay(3000L)
                 println("3")
@@ -77,7 +77,7 @@ fun main(args: Array<String>) {
         val request = launch {
             repeat(3) { i ->
                 launch {
-                    delay((i + 1) * 200L) // variable delay 200ms, 400ms, 600ms
+                    delay(600 - i * 200L) // variable delay 600ms, 400ms, 200ms
                     println("Coroutine $i is done")
                 }
             }
@@ -87,23 +87,9 @@ fun main(args: Array<String>) {
         println("end")
     }
     // start
-    // Coroutine 0 is done
-    // Coroutine 1 is done
     // Coroutine 2 is done
+    // Coroutine 1 is done
+    // Coroutine 0 is done
     // end
-
-    // Coroutines in global scope are like deamon threads.
-    runBlocking {
-        GlobalScope.launch {
-            repeat(1000) { i ->
-                println("I'm sleeping $i ...")
-                delay(500L)
-            }
-        }
-        delay(1300L)
-    }
-    // I'm sleeping 0 ...
-    // I'm sleeping 1 ...
-    // I'm sleeping 2 ...
 
 }

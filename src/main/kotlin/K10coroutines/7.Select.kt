@@ -43,26 +43,14 @@ fun main() {
     // selected 2
     // Done!
 
-    suspend fun <T> selectAorB(a: ReceiveChannel<T>, b: ReceiveChannel<T>): String =
-        select<String> {
-            a.onReceiveOrNull {
-                if (it == null) "Channel 'a' is closed"
-                else "a received $it"
-            }
-            b.onReceiveOrNull {
-                if (it == null) "Channel 'b' is closed"
-                else "b received $it"
-            }
-        }
-
     // Selecting on close:
-    // We can use onReceiveOrNull clause to perform a specific action when the channel is closed.
+    // Select is biased to the first clause, so when values exist on both channels the first channel gets selected.
     runBlocking {
-        val oneProducer = produce<Int> { repeat(4) { send(1) } } // no delay in order to
+        val oneProducer = produce<Int> { repeat(4) { send(1) } }
         val twoProducer = produce<Int> { repeat(4) { send(2) } }
         repeat(8) {
             val value = select<String> {
-                oneProducer.onReceiveOrNull {
+                oneProducer.onReceiveOrNull { // We use onReceiveOrNull clause to know when channel is closed
                     if (it == null) "channel 'a' is closed"
                     else "received on a $it"
                 }
@@ -79,17 +67,13 @@ fun main() {
     }
     // received on a 1
     // received on a 1
-    // received on b 2
+    // received on b 2 (since we are using a unbuffered channel, oneProducer gets suspended from time to time on send)
     // received on a 1
     // received on a 1
     // received on b 2
     // channel 'a' is closed
     // channel 'a' is closed
     // Done!
-
-    // Notations:
-    // - select is biased to the first clause, so when values exist on both channels the a channel gets selected
-    // - since we are using unbuffered channel, the a gets suspended from time to time on its send invocation
 
     // Selecting on send:
     // Select expression has an onSend function that can exploit the select bias.

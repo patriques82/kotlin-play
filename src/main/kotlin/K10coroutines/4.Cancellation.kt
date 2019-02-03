@@ -75,7 +75,7 @@ fun main() {
     // First child was cancelled
     // Computation failed with ConnectException
 
-    // Most often though, you want to cancel due to a timeout.
+    // Often you want to cancel due to a timeout.
     runBlocking {
         try {
             withTimeout(1300L) {
@@ -109,12 +109,12 @@ fun main() {
         }
         delay(1000)
         job.cancel()
-        println("parent scope says, Cancelling the jobs...")
+        println("parent scope says, I have cancelled all child scope jobs...")
         delay(2000) // delay a second to see what happens
     }
     // global scope says, Hi!
     // child scope says, Hi!
-    // parent scope says, Cancelling the jobs...
+    // parent scope says, I have cancelled all child scope jobs...
     // global scope says, Got some milk?
 
 }

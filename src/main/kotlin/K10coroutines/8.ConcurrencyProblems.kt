@@ -6,7 +6,7 @@ import kotlinx.coroutines.sync.withLock
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.system.*
 
-// Concepts (Good to know):
+// Typical concurrency problems:
 // Racecondition - Two threads read the same value (before the other thread has updated the value), then both update wrongly.
 // Deadlock - Two or more threads holds a lock while they wait infinitely for eachother to complete.
 // Livelock - Two or more threads, instead of waiting, gives each other opportunity infinitely to complete.
@@ -39,7 +39,7 @@ fun main() {
     // Completed 100000 actions in 18 ms
     // Counter = 57301
 
-    // We could use AtomicInteger class to which has an atomic incrementAndGet method
+    // We could use an AtomicInteger which has an atomic incrementAndGet method
     val atomicCounter = AtomicInteger(0)
     runBlocking<Unit> {
         GlobalScope.massiveRun {
@@ -50,7 +50,7 @@ fun main() {
     // Completed 100000 actions in 7 ms
     // Counter = 100000
 
-    // This works well but it does not scale to complex state or to complex operations. Mutual exclusion is the usal
+    // This works well but it does not scale to complex state or complex operations. Mutual exclusion is the usal
     // solution, i.e protect all modifications of the shared state with a critical section that is never executed
     // concurrently. Coroutines alternative to this is called Mutex that has a 'lock' and 'unlock' function to delimit a
     // critical section.
@@ -67,6 +67,6 @@ fun main() {
     // Completed 100000 actions in 155 ms
     // Count = 100000
 
-    // The locking in this example is fine-grained, so it pays the price.
+    // The locking in this example is fine-grained, so it requires longer execution time compared to AtomicInteger.
 
 }

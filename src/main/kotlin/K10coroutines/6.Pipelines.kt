@@ -42,6 +42,7 @@ fun main() {
 
     // Fan out:
     // Multiple coroutines receive from the same channel.
+
     fun CoroutineScope.launchProcessor(id: Int, channel: ReceiveChannel<Int>): Job =
         launch {
             for (msg in channel) { // receive (Fan out)
@@ -69,6 +70,7 @@ fun main() {
 
     // Fan in:
     // Multiple coroutines send to the same channel.
+
     suspend fun sendNumber(channel: SendChannel<Int>, num: Int, time: Long) {
         while (true) {
             delay(time)
@@ -95,8 +97,8 @@ fun main() {
     // 2
 
     // Buffered channels:
-    // Until now we have only seen unbuffered channels, i.e they only transfer data when there a sending coroutine and
-    // a receiving coroutine meet. But we can also specify a buffering capacity to the channel, and thus let the sender
+    // Until now we have only seen unbuffered channels, i.e they only transfer data when a sending coroutine and a
+    // receiving coroutine meet. But we can also specify a buffering capacity to the channel, and thus let the sender
     // buffer a specific amount when there is no receiving end.
     fun CoroutineScope.produceBufferedNumbers(bufferSize: Int): ReceiveChannel<Int> =
         produce(capacity = bufferSize) {

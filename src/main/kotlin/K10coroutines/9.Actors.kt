@@ -33,7 +33,7 @@ fun main() {
 
     runBlocking {
         val counterActor = counterActor()
-        GlobalScope.massiveRun {
+        massiveRun {
             counterActor.send(IncCounter) // send 100000 InCounter messages to actor
         }
         val response = CompletableDeferred<Int>()

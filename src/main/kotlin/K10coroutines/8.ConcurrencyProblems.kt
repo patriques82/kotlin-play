@@ -12,12 +12,12 @@ import kotlin.system.*
 // Livelock - Two or more threads, instead of waiting, gives each other opportunity infinitely to complete.
 // Starvation - A low priority thread does not get access to the resources it needs.
 
-suspend fun CoroutineScope.massiveRun(action: suspend () -> Unit) {
+suspend fun massiveRun(action: suspend () -> Unit) {
     val n = 100  // number of coroutines to launch
     val k = 1000 // times an action is repeated by each coroutine
     val time = measureTimeMillis {
         val jobs = List(n) {
-            launch {
+            GlobalScope.launch {
                 repeat(k) { action() }
             }
         }
@@ -26,12 +26,31 @@ suspend fun CoroutineScope.massiveRun(action: suspend () -> Unit) {
     println("Completed ${n * k} actions in $time ms")
 }
 
+// Why dont we write massiveRun like a extension function. And use the structured concurrency that gives us?
+fun CoroutineScope.altMassiveRun(action: suspend () -> Unit) {
+    val n = 100  // number of coroutines to launch
+    val k = 1000 // times an action is repeated by each coroutine
+    val time = measureTimeMillis {
+        repeat(n) {
+            launch {
+                repeat(k) { action() }
+            }
+        }
+    }
+    println("Completed ${n * k} actions in $time ms")
+}
+// The problem is that altMassiveRun cannot wait for all coroutines to finish and in our code we want to control the
+// coroutines lifecycle, since that is what we want to measure. The convention is:
+//
+// suspending function - when the function takes long time to process (it is suspending)
+// extension function  - when the function launches coroutines and does not wait for them.
+
 fun main() {
 
     // This will not work since all coroutines (on different threads) will increment counter without synchronization
     var counter = 0
     runBlocking<Unit> {
-        GlobalScope.massiveRun {
+        massiveRun {
             counter++ // Race condition
         }
         println("Counter = $counter")
@@ -42,7 +61,7 @@ fun main() {
     // We could use an AtomicInteger which has an atomic incrementAndGet method
     val atomicCounter = AtomicInteger(0)
     runBlocking<Unit> {
-        GlobalScope.massiveRun {
+        massiveRun {
             atomicCounter.incrementAndGet()
         }
         println("Counter = $atomicCounter")
@@ -57,7 +76,7 @@ fun main() {
     var count = 0
     val mutex = Mutex()
     runBlocking<Unit> {
-        GlobalScope.massiveRun {
+        massiveRun {
             mutex.withLock { // withLock translates to mutex.lock(); try { ... } finally { mutex.unlock() }
                 count++
             }

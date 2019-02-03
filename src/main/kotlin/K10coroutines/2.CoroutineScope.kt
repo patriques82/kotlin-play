@@ -28,7 +28,9 @@ fun main(args: Array<String>) {
             println("are")
         }
         println("coroutines") // main thread continues here immediately
-        // wait until coroutines in global scope completes, otherwise the main thread continues and results get mixed up.
+        // We have to wait until coroutines in global scope completes, otherwise the main thread continues directly and
+        // and next runBlocking block continues, so that results get mixed up. A good rule of thumb is to always join or
+        // cancel on jobs from launched in global scope.
         are.join()
         great.join()
     }

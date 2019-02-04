@@ -40,7 +40,7 @@ fun CoroutineScope.altMassiveRun(action: suspend () -> Unit) {
     println("Completed ${n * k} actions in $time ms")
 }
 // The problem is that altMassiveRun cannot wait for all coroutines to finish and in our code we want to control the
-// coroutines lifecycle, since that is what we want to measure. The convention is:
+// coroutines lifecycle since that is what we want to measure. The convention is:
 //
 // suspending function - when the function takes long time to process (it is suspending)
 // extension function  - when the function launches coroutines and does not wait for them.
